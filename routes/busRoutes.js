@@ -2,11 +2,6 @@ import express from "express";
 import Bus from "../models/Bus.js";
 
 const router = express.Router();
-const query = {};
-
-if (from) query.from = new RegExp(`^${from}$`, "i");
-if (to) query.to = new RegExp(`^${to}$`, "i");
-if (date) query.date = date;
 
 // --- Search buses by busNumber OR from/to/date ---
 router.get("/search", async (req, res) => {
@@ -15,14 +10,13 @@ router.get("/search", async (req, res) => {
   let query = {};
 
   if (busNumber) query.busNumber = busNumber;
-  if (from) query.from = from;
-  if (to) query.to = to;
+  if (from) query.from = new RegExp(`^${from}$`, "i"); // case-insensitive
+  if (to) query.to = new RegExp(`^${to}$`, "i");       // case-insensitive
   if (date) query.date = date;
 
   try {
     const buses = await Bus.find(query);
-    
-    res.json(buses);
+    res.json(buses); // always return array
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
@@ -54,7 +48,7 @@ router.post("/lock-seat", async (req, res) => {
 
     const lockUntil = new Date(Date.now() + 5 * 60 * 1000);
 
-    // ✅ ATOMIC UPDATE (NO VERSION ERROR)
+    // Atomic update
     await Bus.updateOne(
       { busNumber },
       {
@@ -84,7 +78,10 @@ router.post("/lock-seat", async (req, res) => {
 // --- Confirm booking ---
 router.post("/confirm-booking", async (req, res) => {
   const { busNumber, seats } = req.body;
-  if (!busNumber || !seats?.length) return res.status(400).json({ message: "Invalid request" });
+
+  if (!busNumber || !seats?.length) {
+    return res.status(400).json({ message: "Invalid request" });
+  }
 
   try {
     const bus = await Bus.findOne({ busNumber });
@@ -100,6 +97,7 @@ router.post("/confirm-booking", async (req, res) => {
 
     await bus.save();
     res.json({ message: "Booking confirmed" });
+
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
   }
@@ -119,5 +117,3 @@ router.get("/:busNumber", async (req, res) => {
 });
 
 export default router;
-
-
