@@ -16,6 +16,9 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.send("🚌 TimeBus Backend is running!");
+});
 
 // Routes
 app.use("/api/buses", busRoutes);
@@ -39,3 +42,4 @@ mongoose
     );
   })
   .catch(err => console.error("❌ Mongo error:", err));
+
