@@ -2,6 +2,11 @@ import express from "express";
 import Bus from "../models/Bus.js";
 
 const router = express.Router();
+const query = {};
+
+if (from) query.from = new RegExp(`^${from}$`, "i");
+if (to) query.to = new RegExp(`^${to}$`, "i");
+if (date) query.date = date;
 
 // --- Search buses by busNumber OR from/to/date ---
 router.get("/search", async (req, res) => {
@@ -114,4 +119,5 @@ router.get("/:busNumber", async (req, res) => {
 });
 
 export default router;
+
 
