@@ -16,7 +16,7 @@ router.get("/search", async (req, res) => {
 
   try {
     const buses = await Bus.find(query);
-    if (!buses.length) return res.status(404).json({ message: "No buses found" });
+    
     res.json(buses);
   } catch (err) {
     res.status(500).json({ message: "Server error", error: err.message });
@@ -114,3 +114,4 @@ router.get("/:busNumber", async (req, res) => {
 });
 
 export default router;
+
