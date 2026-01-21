@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>TimeBus eTicket</title>
+
+  <!-- EXACT CSS YOU PROVIDED – NOT CHANGED -->
+  <style>
+    body {
+      background: #fff;
+      font-family: "Times New Roman", serif;
+      color: #000;
+      margin: 0;
+      padding: 0;
+    }
+
+    .ticket {
+      width: 900px;
+      margin: 30px auto;
+      padding: 20px 25px;
+      border: 1px solid #000;
+    }
+
+    /* HEADER */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 80px;
+    }
+
+    .etype {
+      font-size: 20px;
+      font-weight: bold;
+    }
+
+    /* Right help section */
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    .help-icon {
+      width: 20px;
+    }
+
+    /* ROUTE */
+    .route {
+      font-size: 22px;
+      font-weight: bold;
+      margin-top: 8px;
+    }
+
+    .date {
+      font-size: 14px;
+      margin-bottom: 12px;
+    }
+
+    /* TABLE */
+    .info {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+    }
+
+    .info td {
+      padding: 6px 0;
+      vertical-align: top;
+    }
+
+    .label {
+      font-size: 12px;
+    }
+
+    .value {
+      font-size: 14px;
+      font-weight: bold;
+    }
+
+    /* PNR */
+    .pnr {
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    /* FARE */
+    .fare {
+      font-size: 14px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #000;
+    }
+
+    /* TERMS */
+    .terms {
+      font-size: 12px;
+    }
+
+    .terms ol {
+      padding-left: 18px;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #000;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="ticket">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="header-left">
+      <img src="./assets/logo.png" class="logo" />
+      <div class="etype">eTicket</div>
+    </div>
+
+    <div class="header-right">
+      <img src="./assets/help-icon.png" class="help-icon" />
+
+      <div>
+        <b>Need help with your trip?</b><br>
+        {{supportPhone}}<br>
+        {{supportEmail}}
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- ROUTE -->
+  <div class="route">{{source}} → {{destination}}</div>
+  <div class="date">{{journeyDay}}, {{journeyDate}}</div>
+
+  <!-- MAIN INFO GRID -->
+  <table class="info">
+    <tr>
+      <td>
+        <div class="label">Reporting time</div>
+        <div class="value">{{reportingTime}}</div>
+      </td>
+      <td>
+        <div class="label">Departure time</div>
+        <div class="value">{{departureTime}}</div>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <div class="label">Location</div>
+        <div class="value">{{boardingPoint}}</div>
+      </td>
+      <td>
+        <div class="label">Landmark</div>
+        <div class="value">{{landmark}}</div>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <div class="label">Bus Operator</div>
+        <div class="value">{{busName}}</div>
+      </td>
+      <td>
+        <div class="label">Bus Type</div>
+        <div class="value">{{busType}}</div>
+      </td>
+    </tr>
+
+    <tr>
+      <td>
+        <div class="label">Passenger Name</div>
+        <div class="value">{{passengerName}}</div>
+      </td>
+      <td>
+        <div class="label">Seat Numbers</div>
+        <div class="value">{{seatNumbers}}</div>
+      </td>
+    </tr>
+  </table>
+
+  <!-- PNR -->
+  <div class="pnr">
+    <div>Ticket No: <b>{{ticketId}}</b></div>
+    <div>PNR No: {{pnr}}</div>
+  </div>
+
+  <!-- FARE -->
+  <div class="fare">
+    Total Fare: <b>Rs. {{totalFare}}</b> (Inclusive of service tax)
+  </div>
+
+  <hr>
+
+  <!-- TERMS -->
+  <div class="terms">
+    <b>Terms and Conditions</b>
+    <ol>
+      <li>
+        TimeBus is ONLY a bus ticket agent. It does not operate bus services
+        of its own. It is only a facilitator for online bus ticket booking.
+      </li>
+      <li>
+        The arrival and departure times mentioned on the ticket are only tentative timings.
+        However the bus will not leave the source before the time mentioned on the ticket.
+      </li>
+      <li>
+        Passengers are required to furnish the following at the time of boarding the bus:
+        <br>(1) A print out of the ticket
+        <br>(2) A valid identity proof
+        <br>Failing to do so, they may not be allowed to board the bus.
+      </li>
+      <li>
+        Change of bus: In case the bus operator changes the type of bus due to
+        unforeseen reasons, no refund will be given.
+      </li>
+    </ol>
+  </div>
+
+
+</div>
+
+</body>
+</html>
