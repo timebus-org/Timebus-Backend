@@ -4,10 +4,15 @@ exports.searchBuses = async (req, res) => {
   try {
     const { from, to, date } = req.query;
 
+    // Trim inputs to remove extra spaces
+    const fromTrimmed = from?.trim();
+    const toTrimmed = to?.trim();
+    const dateTrimmed = date?.trim();
+
     const buses = await Bus.find({
-      from: { $regex: new RegExp(`^${from}$`, "i") },
-      to: { $regex: new RegExp(`^${to}$`, "i") },
-      date: date
+      from: { $regex: new RegExp(`^${fromTrimmed}$`, "i") },
+      to: { $regex: new RegExp(`^${toTrimmed}$`, "i") },
+      date: dateTrimmed
     });
 
     console.log("Query:", req.query);
@@ -19,5 +24,3 @@ exports.searchBuses = async (req, res) => {
     res.status(500).json([]);
   }
 };
-
-
