@@ -7,7 +7,7 @@ exports.searchBuses = async (req, res) => {
     const buses = await Bus.find({
       from: { $regex: new RegExp(`^${from}$`, "i") },
       to: { $regex: new RegExp(`^${to}$`, "i") },
-      date: date // date must match exactly, keep as is
+      date: date
     });
 
     console.log("Query:", req.query);
@@ -19,3 +19,5 @@ exports.searchBuses = async (req, res) => {
     res.status(500).json([]);
   }
 };
+
+
