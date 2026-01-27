@@ -1,12 +1,9 @@
-import 'dotenv/config';
+import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
-import sendTelegram from "../utils/telegram.js";
-import sendEmail from "../utils/email.js";
-import sendSMS from "../utils/sms.js";
 
 const supabase = createClient(
   process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY   // ✅ FIXED HERE
+  process.env.SUPABASE_KEY
 );
 
 export const createCabRequest = async (req, res) => {
@@ -24,7 +21,6 @@ export const createCabRequest = async (req, res) => {
       estimatedFare,
     } = req.body;
 
-    // 1️⃣ SAVE REQUEST
     const { error } = await supabase
       .from("cab_booking_requests")
       .insert([
@@ -45,33 +41,16 @@ export const createCabRequest = async (req, res) => {
 
     if (error) throw error;
 
-    // 2️⃣ MESSAGE TEMPLATE
-    const message = `
-🚖 New Cab Booking Request
-
-Customer: ${name}
-Phone: ${phone}
-
-From: ${from}
-To: ${to}
-Date: ${date}
-Time: ${time}
-
-Cab: ${cab}
-Estimated Fare: ₹${estimatedFare}
-
-Please contact the customer.
-`;
-
-    // 3️⃣ NOTIFICATIONS (FAIL-SAFE)
-    await sendTelegram(message);
-    await sendEmail("New Cab Booking", message);
-    await sendSMS(phone, message);
-
-    return res.json({ success: true });
+    return res.json({
+      success: true,
+      message: "Cab request created successfully",
+    });
 
   } catch (err) {
     console.error("CAB REQUEST ERROR:", err);
-    return res.status(500).json({ success: false });
+    return res.status(500).json({
+      success: false,
+      message: "Failed to create cab request",
+    });
   }
 };
