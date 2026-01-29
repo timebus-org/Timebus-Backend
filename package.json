@@ -12,8 +12,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@supabase/supabase-js": "^2.91.0",
     "cors": "^2.8.5",
-    "@supabase/supabase-js": "^2.39.7",
+    "crypto": "^1.0.1",
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "fs": "^0.0.1-security",
@@ -22,11 +23,16 @@
     "html2canvas": "^1.4.1",
     "jspdf": "^4.0.0",
     "mongoose": "^9.1.2",
+    "nanoid": "^5.1.6",
     "node-cron": "^4.2.1",
+    "node-fetch": "^3.3.2",
     "nodemailer": "^7.0.12",
     "path": "^0.12.7",
+    "pdfkit": "^0.17.2",
     "puppeteer": "^24.34.0",
     "razorpay": "^2.9.6",
-    "twilio": "^5.11.2"
+    "resend": "^6.8.0",
+    "twilio": "^5.11.2",
+    "uuid": "^13.0.0"
   }
 }
