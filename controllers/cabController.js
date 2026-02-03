@@ -8,26 +8,19 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 
-// 🔹 WhatsApp sender (background)
-const sendWhatsAppMessage = async (message) => {
+// 🔹 Telegram sender (background)
+const sendTelegramMessage = async (message) => {
   try {
     await axios.post(
-      `https://graph.facebook.com/v19.0/${process.env.WHATSAPP_PHONE_ID}/messages`,
+      `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
       {
-        messaging_product: "whatsapp",
-        to: process.env.OWNER_WHATSAPP,
-        type: "text",
-        text: { body: message }
-      },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
-          "Content-Type": "application/json"
-        }
+        chat_id: process.env.TELEGRAM_CHAT_ID,
+        text: message,
+        parse_mode: "Markdown" // supports bold, italics, emojis
       }
     );
   } catch (err) {
-    console.error("❌ WhatsApp Error:", err.response?.data || err.message);
+    console.error("❌ Telegram Error:", err.response?.data || err.message);
   }
 };
 
@@ -89,12 +82,12 @@ export const createCabRequest = async (req, res) => {
 
     await sendEmail("🚖 New Cab Booking Request", emailHtml);
 
-    // 🔹 WhatsApp message (BACKGROUND)
-    const whatsappMessage = `
-🚖 *New Cab Booking*
+    // 🔹 Telegram message (BACKGROUND)
+    const telegramMessage = `
+🚖 *New Cab Booking Request*
 
-👤 ${name}
-📞 ${phone}
+👤 *${name}*
+📞 *${phone}*
 
 📍 From: ${from}
 📍 To: ${to}
@@ -107,7 +100,7 @@ export const createCabRequest = async (req, res) => {
 💰 ₹${estimatedFare}
 `;
 
-    sendWhatsAppMessage(whatsappMessage); // no await → background
+    sendTelegramMessage(telegramMessage); // no await → background
 
     return res.json({ success: true });
 
