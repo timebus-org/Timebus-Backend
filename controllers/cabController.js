@@ -1,6 +1,6 @@
-import 'dotenv/config';
-import axios from "axios";
+import "dotenv/config";
 import { createClient } from "@supabase/supabase-js";
+import axios from "axios";
 import sendEmail from "../utils/email.js";
 
 const supabase = createClient(
@@ -8,19 +8,22 @@ const supabase = createClient(
   process.env.SUPABASE_KEY
 );
 
-// 🔹 Telegram sender (background)
+/* ===== TELEGRAM FUNCTION WITH LOGS ===== */
 const sendTelegramMessage = async (message) => {
   try {
-    await axios.post(
+    console.log("📤 Sending Telegram message...");
+    const response = await axios.post(
       `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
       {
         chat_id: process.env.TELEGRAM_CHAT_ID,
         text: message,
-        parse_mode: "Markdown" // supports bold, italics, emojis
       }
     );
+    console.log("✅ Telegram response:", response.data);
+    return response.data;
   } catch (err) {
-    console.error("❌ Telegram Error:", err.response?.data || err.message);
+    console.error("❌ TELEGRAM ERROR:", err.response?.data || err.message);
+    throw err;
   }
 };
 
@@ -46,31 +49,34 @@ export const createCabRequest = async (req, res) => {
       ? date.split("-").reverse().join("-")
       : date;
 
-    // 🔹 Save to DB
+    // 🔹 Save booking request to DB
     const { error } = await supabase
       .from("cab_booking_requests")
-      .insert([{
-        user_id: userId || null,
-        name,
-        phone,
-        email,
-        from_location: from,
-        to_location: to,
-        date: formattedDate,
-        time,
-        cab,
-        estimated_fare: estimatedFare,
-        trip_type: tripType,
-        status: "REQUESTED",
-      }]);
+      .insert([
+        {
+          user_id: userId || null,
+          name,
+          phone,
+          email,
+          from_location: from,
+          to_location: to,
+          date: formattedDate,
+          time,
+          cab,
+          estimated_fare: estimatedFare,
+          trip_type: tripType,
+          status: "REQUESTED",
+        },
+      ]);
 
     if (error) throw error;
 
-    // 🔹 Email
+    // 🔹 Email to owner
     const emailHtml = `
       <h2>🚖 New Cab Booking Request</h2>
       <p><b>Name:</b> ${name}</p>
       <p><b>Phone:</b> ${phone}</p>
+      <p><b>Email:</b> ${email}</p>
       <p><b>From:</b> ${from}</p>
       <p><b>To:</b> ${to}</p>
       <p><b>Date:</b> ${formattedDate}</p>
@@ -82,33 +88,35 @@ export const createCabRequest = async (req, res) => {
 
     await sendEmail("🚖 New Cab Booking Request", emailHtml);
 
-    // 🔹 Telegram message (BACKGROUND)
+    // 🔹 Telegram
     const telegramMessage = `
-🚖 *New Cab Booking Request*
+🚖 New Cab Booking
 
-👤 *${name}*
-📞 *${phone}*
+Name: ${name}
+Phone: ${phone}
+Email: ${email}
 
-📍 From: ${from}
-📍 To: ${to}
+From: ${from}
+To: ${to}
+Date: ${formattedDate}
+Time: ${time}
 
-🗓 ${formattedDate}
-⏰ ${time}
-🚘 ${cab}
-🧭 ${tripType}
+Cab: ${cab}
+Trip: ${tripType}
+Fare: ₹${estimatedFare}
+    `;
 
-💰 ₹${estimatedFare}
-`;
+    const telegramResponse = await sendTelegramMessage(telegramMessage);
+    console.log("📌 Telegram message sent successfully.");
 
-    sendTelegramMessage(telegramMessage); // no await → background
-
+    // ✅ Response
     return res.json({ success: true });
 
   } catch (err) {
     console.error("❌ CAB REQUEST ERROR:", err);
     return res.status(500).json({
       success: false,
-      error: err.message
+      error: err.message,
     });
   }
 };
